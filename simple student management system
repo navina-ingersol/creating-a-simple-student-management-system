@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <string.h>
+#define MAX_STUDENTS 100
+#define NAME_LENGTH 50
+void displayStudents(char students[][NAME_LENGTH], int count) {
+if (count == 0) {
+printf("No students in the list.\n");
+} else {
+printf("Current list of students:\n");
+for (int i = 0; i < count; i++) {
+printf("%d: %s\n", i + 1, students[i]);
+}
+}
+}
+int main() {
+char students[MAX_STUDENTS][NAME_LENGTH];
+int count = 0;
+int choice;
+do {
+printf("\nStudent Management System:\n");
+printf("1. Create Student List\n");
+printf("2. Insert Student\n");
+printf("3. Delete Student\n");
+printf("4. Traverse List\n");
+printf("5. Search Student\n");
+printf("6. Exit\n");
+printf("Enter your choice: ");
+scanf("%d", &choice);
+getchar(); // to consume newline character
+
+switch (choice) {
+case 1: {
+printf("Enter student names (type 'done' to finish):\n");
+while (count < MAX_STUDENTS) {
+printf("Enter name: ");
+fgets(students[count], NAME_LENGTH, stdin);
+students[count][strcspn(students[count], "\n")] = 0; // remove newline
+if (strcmp(students[count], "done") == 0) {
+break;
+}
+count++;
+}
+break;
+}
+case 2: {
+if (count >= MAX_STUDENTS) {
+printf("List is full. Cannot insert new student.\n");
+} else {
+char name[NAME_LENGTH];
+int index;
+printf("Enter student name: ");
+fgets(name, NAME_LENGTH, stdin);
+name[strcspn(name, "\n")] = 0; // remove newline
+printf("Enter position (1 to %d): ", count + 1);
+scanf("%d", &index);
+getchar(); // consume newline
+if (index < 1 || index > count + 1) {
+printf("Invalid position.\n");
+} else {
+for (int i = count; i >= index; i--) {
+strcpy(students[i], students[i - 1]);
+}
+strcpy(students[index - 1], name);
+count++;
+}
+}
+break;
+}
+case 3: {
+if (count == 0) {
+printf("No students to delete.\n");
+} else {
+char option;
+printf("Delete by (n)ame or (i)ndex? ");
+
+scanf(" %c", &option);
+getchar(); // consume newline
+if (option == 'n') {
+char name[NAME_LENGTH];
+printf("Enter name to delete: ");
+fgets(name, NAME_LENGTH, stdin);
+name[strcspn(name, "\n")] = 0; // remove newline
+int found = 0;
+for (int i = 0; i < count; i++) {
+if (strcmp(students[i], name) == 0) {
+found = 1;
+for (int j = i; j < count - 1; j++) {
+strcpy(students[j], students[j + 1]);
+}
+count--;
+break;
+}
+}
+if (!found) {
+printf("Student not found.\n");
+}
+} else if (option == 'i') {
+int index;
+printf("Enter position (1 to %d): ", count);
+scanf("%d", &index);
+getchar(); // consume newline
+if (index < 1 || index > count) {
+printf("Invalid position.\n");
+} else {
+for (int i = index - 1; i < count - 1; i++) {
+strcpy(students[i], students[i + 1]);
+}
+count--;
+}
+} else {
+printf("Invalid option.\n");
+}
+}
+break;
+}
+case 4: {
+displayStudents(students, count);
+break;
+}
+
+case 5: {
+char name[NAME_LENGTH];
+printf("Enter student name to search: ");
+fgets(name, NAME_LENGTH, stdin);
+name[strcspn(name, "\n")] = 0; // remove newline
+int found = 0;
+for (int i = 0; i < count; i++) {
+if (strcmp(students[i], name) == 0) {
+printf("Student found at position %d.\n", i + 1);
+found = 1;
+break;
+}
+}
+if (!found) {
+printf("Student not found.\n");
+}
+break;
+}
+case 6:
+printf("Exiting the program.\n");
+break;
+default:
+printf("Invalid choice. Please try again.\n");
+}
+} while (choice != 6);
+return 0;
+}
